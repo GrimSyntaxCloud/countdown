@@ -34,3 +34,29 @@ test("calendar dates stay exact across daylight-saving transitions and past date
       expected,
     );
 });
+
+test("board and accessible result describe future, past and today consistently", () => {
+  const today = context.parseEventDate("10/22/2026");
+  for (const [date, days, state] of [
+    ["10/23/2026", 1, "ON THE HORIZON"],
+    ["10/21/2026", -1, "IN THE MEMORY BANK"],
+    ["10/22/2026", 0, "TODAY IS THE DAY"],
+  ]) {
+    const result = context.describeCountdown(
+      "Big day",
+      context.parseEventDate(date),
+      today,
+    );
+    assert.equal(result.days, days);
+    assert.equal(result.state, state);
+    assert.match(result.message, /Big day/);
+    assert.ok(!result.message.includes("-1 day"));
+  }
+});
+
+test("accepts padded input and early years without Date's 1900-year offset", () => {
+  assert.equal(context.parseEventDate(" 1/2/0001 ").getFullYear(), 1);
+  assert.equal(context.parseEventDate("01/01/0000"), null);
+  assert.equal(context.parseEventDate("10/22/2026 extra"), null);
+  assert.equal(context.parseEventDate("04/31/2026"), null);
+});

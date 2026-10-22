@@ -32,58 +32,107 @@ var calendarDaysBetween = function (from, to) {
   return (ordinal(to) - ordinal(from)) / 86400000;
 };
 
+// Keep the message and visual board driven by the same calendar-day result.
+var describeCountdown = function (event, date, today) {
+  var days = calendarDaysBetween(today, date);
+  return {
+    days: days,
+    state:
+      days === 0
+        ? "TODAY IS THE DAY"
+        : days < 0
+          ? "IN THE MEMORY BANK"
+          : "ON THE HORIZON",
+    direction:
+      days === 0
+        ? "YOUR MOMENT IS HERE."
+        : days < 0
+          ? "SINCE YOUR MILESTONE."
+          : "UNTIL YOUR MILESTONE.",
+    message:
+      days === 0
+        ? "Hooray! Today is " + event + "! (" + date.toDateString() + ")"
+        : Math.abs(days) +
+          " day(s) " +
+          (days < 0 ? "since " : "until ") +
+          event +
+          " (" +
+          date.toDateString() +
+          ")",
+  };
+};
+
 var calculateDays = function () {
   var event = $("event").value.trim();
-  var dt = $("date").value;
-  var msg = $("message").firstChild;
-
-  if (event.length == 0 || dt.length == 0) {
-    msg.nodeValue = "Please enter both a name and a date";
-    return;
-  }
-
+  var dt = $("date").value.trim();
   var date = parseEventDate(dt);
-  if (!date) {
-    msg.nodeValue = "Please enter a real date in MM/DD/YYYY format.";
+  $("event").removeAttribute("aria-invalid");
+  $("date").removeAttribute("aria-invalid");
+  $("error").textContent = "";
+  if (!event || !date) {
+    var field = !event ? $("event") : $("date");
+    $("error").textContent = !event
+      ? "Give your event a name first."
+      : "Please enter a real date in MM/DD/YYYY format.";
+    field.setAttribute("aria-invalid", "true");
+    field.focus();
     return;
   }
-
-  var days = calendarDaysBetween(new Date(), date);
-
-  if (days == 0) {
-    msg.nodeValue = "Hooray! Today is ".concat(
-      event.toLowerCase(),
-      "!\n(",
-      date.toDateString(),
-      ")",
-    );
-  }
-
-  if (days < 0) {
-    event = event.substring(0, 1).toUpperCase() + event.substring(1);
-    msg.nodeValue = event.concat(
-      " happened ",
-      Math.abs(days),
-      " day(s) ago. \n (",
-      date.toDateString(),
-      ")",
-    );
-  }
-
-  if (days > 0) {
-    msg.nodeValue = days
-      .toString()
-      .concat(
-        " day(s) until ",
-        event.toLowerCase(),
-        "!\n(",
-        date.toDateString(),
-        ")",
-      );
-  }
+  var result = describeCountdown(event, date, new Date());
+  var value = String(Math.abs(result.days)).padStart(3, "0");
+  var digits = $("digits");
+  digits.replaceChildren();
+  digits.classList.toggle("many", value.length > 4);
+  digits.style.setProperty("--count", value.length);
+  Array.from(value).forEach(function (digit, index) {
+    var flap = document.createElement("span");
+    flap.className = "flap";
+    flap.style.setProperty("--i", index);
+    flap.textContent = digit;
+    digits.appendChild(flap);
+  });
+  $("event-title").textContent = event;
+  $("state-label").textContent = result.state;
+  $("direction").textContent = result.direction;
+  $("day-unit").textContent = Math.abs(result.days) === 1 ? "DAY" : "DAYS";
+  $("target-date").textContent = date
+    .toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+    .toUpperCase();
+  $("message").textContent = result.message;
+  digits.classList.remove("flip");
+  // Force a fresh animation for repeated submissions, without changing the result.
+  void digits.offsetWidth;
+  digits.classList.add("flip");
 };
 
 window.onload = function () {
-  $("countdown").onclick = calculateDays;
-  $("event").focus();
+  $("today-label").textContent =
+    "TODAY / " +
+    new Date()
+      .toLocaleDateString("en-US", { month: "short", day: "2-digit" })
+      .toUpperCase();
+  $("countdown-form").onsubmit = function (event) {
+    event.preventDefault();
+    calculateDays();
+  };
+  var motion = $("motion-toggle");
+  var preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var setMotion = function (off) {
+    document.body.classList.toggle("motion-off", off);
+    motion.setAttribute("aria-pressed", String(off));
+    motion.setAttribute("aria-label", "Disable motion");
+    motion.textContent = off ? "Motion off ○" : "Motion on ◉";
+  };
+  setMotion(preference.matches);
+  motion.onclick = function () {
+    setMotion(!document.body.classList.contains("motion-off"));
+  };
+  preference.addEventListener("change", function (event) {
+    setMotion(event.matches);
+  });
 };

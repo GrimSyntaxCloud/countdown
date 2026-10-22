@@ -1,18 +1,23 @@
 # Event Countdown
 
-A small JavaScript coursework tool that reports how many calendar days remain until a named event, or how many days have passed.
+A departure-board-inspired calendar countdown for the milestones you look forward to—and the ones you want to remember. Enter a name and date to see the number of days until, or since, your event. Today gets its own celebration state.
 
 [Live demo](https://grimsyntaxcloud.github.io/countdown/) · [Portfolio](https://grimsyntaxcloud.github.io/)
 
 ## What it does
 
-Enter a name and a real date in MM/DD/YYYY format. Date components are validated explicitly, including leap days. Day counts compare calendar dates so daylight-saving changes do not introduce an off-by-one error.
+- Accepts an event name and a real date in **MM/DD/YYYY** format, including leap days.
+- Displays future, past, and same-day results on an amber split-flap board, with an accessible text announcement.
+- Counts **calendar days**, not 24-hour periods, so daylight-saving changes do not produce an off-by-one result.
+- Supports keyboard submission, inline validation, narrow screens, reduced-motion preferences, and an explicit motion toggle. The short flap animation only runs when you submit a valid date.
+
+Entries remain in the current browser tab. Nothing is stored, synced, or sent to a server, and reloading clears the board. The displayed result is calculated when the form is submitted; it does not tick or automatically refresh at midnight.
 
 ## How it works
 
-The interface is static HTML and CSS, with native JavaScript in `countdown.js`. There are no npm dependencies, API keys, accounts, backend services or paid libraries.
+`index.html` supplies the semantic form and board, `styles.css` provides the responsive layout and native CSS motion, and `countdown.js` validates the date and updates both the visual and screen-reader results. Calendar components are parsed explicitly instead of relying on inconsistent browser text-date parsing. The difference uses UTC calendar ordinals derived from local calendar dates.
 
-No entries are saved or sent anywhere.
+This is a static site with no application dependencies, accounts, API keys, backend services, remote fonts, or paid libraries. All visuals are HTML and CSS.
 
 ## Run locally
 
@@ -22,18 +27,20 @@ Use Python 3 to serve this directory:
 python3 -m http.server 8080 --bind 127.0.0.1
 ```
 
-Open http://127.0.0.1:8080/. No package installation is required to use the app.
+Open http://127.0.0.1:8080/. No package installation is required.
 
 ## Verify changes
 
 With Node.js 22 or newer:
 
 ```sh
-node --test test/*.test.mjs
+TZ=America/New_York node --test test/*.test.mjs
 ```
 
-The regression tests cover the repaired behavior using lightweight DOM stand-ins. They do not replace a browser layout check. GitHub Actions runs them on pushes and pull requests. Dependabot checks the Actions used by CI weekly; there is no application dependency manifest to scan.
+The tests cover impossible dates, leap days, early years, daylight-saving boundaries, and future/past/today descriptions. They do not replace browser checks of form submission, keyboard focus, motion settings, and responsive layout.
 
-## Hosting and provenance
+GitHub Actions runs the tests on pushes and pull requests. Dependabot checks Actions weekly; there is no application dependency manifest to scan. GitHub Pages publishes the repository root on `master` for free.
 
-GitHub Pages serves the default branch for free. This remains an educational project by Andres Macias; the original exercise structure is retained. The October 2026 maintenance pass documents local setup and adds targeted correctness fixes and regression coverage without redesigning the interface.
+## Learning provenance
+
+This began as a JavaScript coursework exercise by Andres Macias. The calendar-day calculation and event workflow remain the foundation. Andres directed the October 2026 redesign in collaboration with an AI coding assistant: a distinct split-flap layout, amber-and-ink palette, restrained motion, accessible interaction, and regression tests. This is a learning and portfolio project, not a reminder or scheduling service.

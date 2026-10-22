@@ -1,21 +1,126 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="countdown.js"></script>
-</head>
-<body>
-    <main>
-        <h1>Countdown To...</h1>
-        <label for="event">Event Name:</label>
-        <input type="text" name="event" id="event"><br>
-        <label for="date">Event Date:</label>
-        <input type="text" name="date" id="date"><br>
-        <input type="button" name="countdown" id="countdown" value="Countdown!">
-        <p id="message">&nbsp;</p>
-    </main> 
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#edb93d" />
+    <meta
+      name="description"
+      content="Put your next milestone on the board. A free, private calendar-day countdown for the things you're looking forward to."
+    />
+    <title>Event Countdown — Make it a date.</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="countdown.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="masthead">
+        <a class="wordmark" href="./" aria-label="Event Countdown home"
+          ><span class="mark" aria-hidden="true">↗</span>
+          EVENT<br />COUNTDOWN</a
+        >
+        <p class="masthead-note">GOOD THINGS<br />ARE ON THE HORIZON.</p>
+        <button
+          id="motion-toggle"
+          class="motion-toggle"
+          type="button"
+          aria-pressed="false"
+        >
+          Motion on <span aria-hidden="true">◉</span>
+        </button>
+      </header>
+      <main>
+        <div class="title-row">
+          <h1>Make it a date.</h1>
+          <span class="issue">YOUR NEXT / BIG THING</span>
+        </div>
+        <section class="board" aria-labelledby="board-heading">
+          <div class="board-top">
+            <h2 id="board-heading">
+              <span class="status-light" aria-hidden="true"></span> THE
+              COUNTDOWN BOARD
+            </h2>
+            <span id="today-label"></span>
+          </div>
+          <div class="destination-row">
+            <span class="row-number" aria-hidden="true">01</span>
+            <div>
+              <span class="eyebrow">ON YOUR HORIZON</span>
+              <p id="event-title">Something to look forward to.</p>
+            </div>
+            <span id="state-label" class="state-label">AWAITING A DATE</span>
+          </div>
+          <div class="readout">
+            <div id="digits" class="digits" aria-hidden="true">
+              <span class="flap">–</span><span class="flap">–</span
+              ><span class="flap">–</span>
+            </div>
+            <div class="unit-block">
+              <span id="day-unit">DAYS</span
+              ><span id="direction">MAKE THEM COUNT.</span>
+            </div>
+          </div>
+          <div class="board-bottom">
+            <span id="target-date">YOUR MILESTONE GOES HERE</span
+            ><span class="board-code" aria-hidden="true">EVT — 001 ↗</span>
+          </div>
+          <p id="message" class="sr-only" role="status" aria-live="polite"></p>
+        </section>
+        <section class="booking" aria-labelledby="booking-heading">
+          <div class="booking-intro">
+            <span class="section-number">02 / SET YOUR SIGHTS</span>
+            <h2 id="booking-heading">What's coming up?</h2>
+            <p>A big day. A small win.<br />Give it a name and a date.</p>
+          </div>
+          <form id="countdown-form" novalidate>
+            <div class="field">
+              <label for="event">EVENT NAME <span>01</span></label
+              ><input
+                type="text"
+                name="event"
+                id="event"
+                maxlength="120"
+                placeholder="That next adventure"
+                required
+                autocomplete="off"
+              />
+            </div>
+            <div class="field date-field">
+              <label for="date">EVENT DATE <span>02</span></label
+              ><input
+                type="text"
+                name="date"
+                id="date"
+                placeholder="MM/DD/YYYY"
+                aria-describedby="date-hint"
+                required
+                inputmode="numeric"
+                maxlength="10"
+                autocomplete="off"
+              /><small id="date-hint"
+                >Month / day / year · e.g. 12/31/2026</small
+              >
+            </div>
+            <button type="submit" id="countdown" class="submit-button">
+              Put it on the board <span aria-hidden="true">↗</span>
+            </button>
+            <p id="error" class="error" role="alert"></p>
+          </form>
+        </section>
+        <div class="fine-print">
+          <span
+            ><span aria-hidden="true">↔</span> FUTURE PLANS. PAST MILESTONES.
+            TODAY, TOO.</span
+          >
+          <p>Calendar days, not hours. Your entries stay in this tab.</p>
+        </div>
+      </main>
+      <footer>
+        <span>AN EVERYDAY TOOL BY ANDRES MACIAS</span
+        ><a href="https://grimsyntaxcloud.github.io/"
+          >Back to the portfolio <span aria-hidden="true">↗</span></a
+        >
+      </footer>
+    </div>
+  </body>
 </html>
